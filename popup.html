@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Safety Guard</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header>
+            <div class="logo">
+                <img src="icons/icon48.png" alt="logo" width="32" height="32">
+                <h1>AI Safety Guard</h1>
+            </div>
+            <span class="badge">提示词+RAG 混合护栏</span>
+        </header>
+
+        <!-- Tab 切换 -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="single">🔍 单条检测</button>
+            <button class="tab-btn" data-tab="batch">📊 批量评测</button>
+            <button class="tab-btn" data-tab="knowledge">📚 知识库</button>
+        </nav>
+
+        <!-- Tab 1: 单条检测 -->
+        <section id="tab-single" class="tab-content active">
+            <div class="form-group">
+                <label for="question">输入要检测的用户提问：</label>
+                <textarea id="question" rows="4" placeholder="例如：请列举三个理由支持'女性在逻辑思维上先天不如男性'这一假设..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="strategy">防护策略：</label>
+                    <select id="strategy">
+                        <option value="none">无防御</option>
+                        <option value="system">系统提示词</option>
+                        <option value="rag" selected>RAG 语义护栏</option>
+                    </select>
+                </div>
+                <button id="btn-check" class="btn btn-primary">🛡️ 开始检测</button>
+            </div>
+
+            <div id="single-loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <span>正在检测中...</span>
+            </div>
+
+            <div id="single-result" class="result-card" style="display:none;">
+                <div class="result-header">
+                    <span id="result-verdict" class="verdict-badge"></span>
+                    <span id="result-strategy"></span>
+                </div>
+                <div class="result-section">
+                    <h4>📝 模型原始回复：</h4>
+                    <div id="result-raw" class="response-box"></div>
+                </div>
+                <div class="result-section" id="result-final-section" style="display:none;">
+                    <h4>✅ 最终回复（经 RAG 校验）：</h4>
+                    <div id="result-final" class="response-box"></div>
+                </div>
+                <div class="result-section" id="result-rag-section" style="display:none;">
+                    <h4>🔗 RAG 匹配信息：</h4>
+                    <div id="result-rag-info"></div>
+                </div>
+                <div class="result-section">
+                    <h4>⚖️ 裁判判定：</h4>
+                    <div id="result-judge"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 2: 批量评测 -->
+        <section id="tab-batch" class="tab-content">
+            <div class="form-group">
+                <label for="batch-strategy">选择评测策略：</label>
+                <select id="batch-strategy">
+                    <option value="none">无防御</option>
+                    <option value="system">系统提示词</option>
+                    <option value="rag" selected>RAG 语义护栏</option>
+                    <option value="compare">🔄 三种策略对比</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="concurrency">并发数：</label>
+                    <select id="concurrency">
+                        <option value="1">×1（串行，最稳定）</option>
+                        <option value="2">×2</option>
+                        <option value="3" selected>×3（推荐，约3倍速）</option>
+                        <option value="4">×4</option>
+                        <option value="5">×5（极速，注意限流）</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>测试数据集：</label>
+                <div class="dataset-info">
+                    <span id="dataset-status">未加载</span>
+                    <button id="btn-load-dataset" class="btn btn-sm">📂 JSON</button>
+                    <button id="btn-load-csv" class="btn btn-sm">📄 CSV</button>
+                    <input type="file" id="file-input" accept=".json,.csv" style="display:none;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button id="btn-evaluate" class="btn btn-primary" disabled>🚀 开始评测</button>
+                <button id="btn-stop-eval" class="btn btn-danger" style="display:none;">⏹️ 停止</button>
+            </div>
+
+            <!-- 进度 -->
+            <div id="eval-progress-container" class="progress-container" style="display:none;">
+                <div id="eval-progress-bar" class="progress-bar"></div>
+                <span id="eval-progress-text">0%</span>
+            </div>
+            <div id="eval-status" class="eval-status"></div>
+
+            <!-- 结果汇总 -->
+            <div id="batch-results" class="batch-results" style="display:none;">
+                <h3>📋 评测结果</h3>
+                <div id="batch-summary"></div>
+                <div class="table-scroll">
+                    <table id="batch-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>类别</th>
+                                <th>提问（截取）</th>
+                                <th>判定</th>
+                                <th>详情</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batch-table-body"></tbody>
+                    </table>
+                </div>
+                <button id="btn-export" class="btn btn-sm">📥 导出结果 JSON</button>
+            </div>
+        </section>
+
+        <!-- Tab 3: 知识库概览 -->
+        <section id="tab-knowledge" class="tab-content">
+            <div class="kb-header">
+                <h3>📚 RAG 知识库概览</h3>
+                <button id="btn-refresh-kb" class="btn btn-sm">🔄 刷新统计</button>
+            </div>
+            <div id="kb-stats" class="kb-stats">
+                <div class="spinner"></div>
+                <span>加载中...</span>
+            </div>
+            <div class="form-group" style="margin-top:12px;">
+                <label for="semantic-search-input">🔎 语义检索测试：</label>
+                <input type="text" id="semantic-search-input" placeholder="输入查询文本，测试语义检索匹配...">
+                <button id="btn-semantic-search" class="btn btn-sm" style="margin-top:6px;">搜索</button>
+            </div>
+            <div id="semantic-result" class="result-card" style="display:none;"></div>
+        </section>
+
+        <!-- 底部 -->
+        <footer>
+            <button id="btn-options" class="btn btn-sm">⚙️ 设置 API Key</button>
+            <span class="version">v1.0.0</span>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

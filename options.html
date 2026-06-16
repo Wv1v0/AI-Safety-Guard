@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Safety Guard — 设置</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="icons/icon48.png" alt="logo" width="36" height="36">
+                <div>
+                    <h1>AI Safety Guard</h1>
+                    <p class="subtitle">提示词+RAG 混合护栏 — 插件设置</p>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- API Key 配置 -->
+            <section class="card">
+                <h2>🔑 API Key 配置</h2>
+                <p class="desc">使用硅基流动 (SiliconFlow) API 进行语义向量计算和安全检测。</p>
+                <div class="form-group">
+                    <label for="apiKey">API Key：</label>
+                    <div class="input-row">
+                        <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                        <button id="btn-toggle-key" class="btn btn-icon" title="显示/隐藏">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="apiKeyStatus">状态：</label>
+                    <span id="apiKeyStatus" class="status">未设置</span>
+                </div>
+                <button id="btn-test-key" class="btn btn-outline">🧪 测试连接</button>
+            </section>
+
+            <!-- 模型配置 -->
+            <section class="card">
+                <h2>🤖 模型配置</h2>
+                <p class="desc">选择用于对话生成和安全裁判的大语言模型。</p>
+                <div class="form-group">
+                    <label for="chatModel">对话模型 (Chat Model)：</label>
+                    <select id="chatModel">
+                        <option value="THUDM/GLM-Z1-9B-0414">THUDM/GLM-Z1-9B-0414（推荐）</option>
+                        <option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3</option>
+                        <option value="Qwen/Qwen2.5-7B-Instruct">Qwen/Qwen2.5-7B-Instruct</option>
+                        <option value="Qwen/Qwen2.5-14B-Instruct">Qwen/Qwen2.5-14B-Instruct</option>
+                        <option value="Qwen/Qwen2.5-32B-Instruct">Qwen/Qwen2.5-32B-Instruct</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="judgeModel">裁判模型 (Judge Model)：</label>
+                    <select id="judgeModel">
+                        <option value="Qwen/Qwen2.5-7B-Instruct" selected>Qwen/Qwen2.5-7B-Instruct（推荐）</option>
+                        <option value="THUDM/GLM-Z1-9B-0414">THUDM/GLM-Z1-9B-0414</option>
+                        <option value="deepseek-ai/DeepSeek-V3">deepseek-ai/DeepSeek-V3</option>
+                        <option value="Qwen/Qwen2.5-14B-Instruct">Qwen/Qwen2.5-14B-Instruct</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- 知识库缓存管理 -->
+            <section class="card">
+                <h2>📚 知识库向量缓存</h2>
+                <p class="desc">语义向量的预计算缓存。知识库内容变更后请清除缓存以重新计算。</p>
+                <div class="form-group">
+                    <span id="cacheStatus">检查中...</span>
+                </div>
+                <div class="btn-row">
+                    <button id="btn-clear-cache" class="btn btn-outline">🗑️ 清除向量缓存</button>
+                    <button id="btn-precompute" class="btn btn-primary">🔄 重新预计算向量</button>
+                </div>
+                <div id="precompute-progress" class="progress-info" style="display:none;"></div>
+            </section>
+
+            <!-- 保存 -->
+            <div class="save-bar">
+                <button id="btn-save" class="btn btn-primary btn-lg">💾 保存设置</button>
+                <span id="save-status" class="save-status"></span>
+            </div>
+        </main>
+
+        <footer>
+            <span>AI Safety Guard v1.0.0</span>
+            <span>基于硅基流动 API · 提示词+RAG 混合护栏</span>
+        </footer>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>
