@@ -2,9 +2,11 @@
 
 > 基于系统提示词注入 + RAG 语义向量检索的双模 AI 安全检测浏览器插件，对 AI 对话进行实时安全校验，防御越狱攻击、偏见陷阱和恶意诱导。
 
-- **仓库地址**：【待填写】https://github.com/yourname/your-project
-- **作者**：【待填写】XXX
-- **邮箱**：【待填写】xxx@example.com
+- **仓库地址**：https://github.com/Wv1v0/AI-Safety-Guard.git
+- **作者**：吴依诺，石淇月
+- **邮箱**：
+162320304@nuaa.edu.cn      162320302@nuaa.edu.cn
+
 
 ## 项目简介
 
@@ -126,7 +128,7 @@ extension/
 
 ```bash
 # 1. 克隆仓库
-git clone 【待填写】https://github.com/yourname/your-project.git
+git clone https://github.com/Wv1v0/AI-Safety-Guard.git
 cd extension
 
 # 2. 打开 Chrome 浏览器，访问 chrome://extensions/
