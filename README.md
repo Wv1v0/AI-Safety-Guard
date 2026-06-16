@@ -108,21 +108,29 @@
 ### 数据集下载与放置
 
 ```bash
-# 1. aaibench_2024b_basic.csv 已包含在仓库中，无需额外下载
+# 1. aaibench_2024b_basic.csv 是国家标准《生成式人工智能安全服务基本要求》基准测试集，下载网址（选择基础版）：
+#http://47.103.21.113:8012/
 
 # 2. 如需在插件中使用 CSV 数据集的批量评测：
-#    打开插件 popup → 切换到"批量评测" Tab → 点击"加载 CSV 文件" → 选择本地 aaibench_2024b_basic.csv
+#    打开插件 popup → 切换到"批量评测" Tab → 点击"加载 CSV 文件" → 选择本地csv
 ```
 
 数据集目录结构：
 ```
 extension/
-├── test_set.json              # ✅ 内置 100 条测试数据（已提交到 Git 仓库）
-├── aaibench_2024b_basic.csv   # 外部 2100 条评测数据（已提交到 Git 仓库）
-└── README.md                  # 本文件
+├── data/
+│   └── samples/
+│       ├── test_set.json       # 测试样例
+├── background.js
+├── popup.js
+├── manifest.json
+├── ...其他代码文件
+├── .gitignore        
+└── README.md           
 ```
 
 > `test_set.json` 已通过 `manifest.json` 中的 `web_accessible_resources` 声明，可供插件内部加载。
+注意，使用插件时请将test_set.json置于extension文件夹下。（如下文项目结构）
 
 ## 快速开始
 
